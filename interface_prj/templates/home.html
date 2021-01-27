@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="ko">
+<meta charset="UTF-8">
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" type="text/css">
+
+
+        <link rel="stylesheet" href="{% static 'css/home.css' %}">
+        <head>
+        <title>뉴스 몰아보기</title>
+    </head>
+  
+
+   <body>
+    <div class="page-header">
+        <h1><a href="{% url 'news:news_list' %}">Daily news</a></h1>
+    </div>
+    <div class="left-side-bar">
+        <div class="status-ico">
+            <span>▶</span>
+            <span>▼</span>
+        </div>
+
+        <ul>
+            <li>
+                <a href=""> 경제 뉴스 </a>
+                <ul>
+                    <li><a href="{% url 'news:news_detail' sid1=101 sid2=259 %}"> 금융 </a></li>
+                    <li><a href="{% url 'news:news_detail' sid1=101 sid2=258 %}"> 증권 </a></li>
+                    <li><a href="{% url 'news:news_detail' sid1=101 sid2=261 %}"> 산업/재계 </a></li>
+                </ul>
+            </li>
+            <li>
+                <a href=""> IT/과학 </a>
+                <ul>
+                    <li><a href="{% url 'news:news_detail' sid1=105 sid2=731 %}"> 모바일 </a></li>
+                    <li><a href="{% url 'news:news_detail' sid1=105 sid2=226 %}"> 인터넷/SNS </a></li>
+                    <li><a href="{% url 'news:news_detail' sid1=105 sid2=227 %}"> 통신/뉴미디어 </a></li>
+                </ul>
+            </li>
+            <li>
+                <a href=""> 스포츠 </a>
+                <ul>
+                    <li><a href="{% url 'news:news_sports' sports='kfootball' %}"> 야구 </a></li>
+                    <li><a href="#"> 축구 </a></li>
+                    <li><a href="#"> 해외축구 </a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="content">
+    {% block content %}
+        <p> test </p>
+    {% endblock %}
+    </div>
+</body>
+
+</html>
