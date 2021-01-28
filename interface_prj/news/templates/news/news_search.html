@@ -1,0 +1,45 @@
+<!-- base.html 페이지 상속-->
+
+{% extends "home.html"%}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% block content %}
+    <p>news_search</p>
+
+    <div id="content">
+        <h2>
+            News Search Engine
+        </h2>
+        <form action="{% url 'news:index' %}" method="post">
+            {% csrf_token %}
+
+            <label for="news_title">Search title:
+            </label>
+            <input
+                id="news_title"
+                type="text"
+                name="news_title"
+                value="{{ search_keyword}}">
+            <input type="submit" value="OK">
+
+        </form>
+        <br/><br/>
+        {% if search_list %}
+            <!-- {{search_list.result_list.0.title}} -->
+            {% for result in search_list.result_list %}
+            <h3>
+                <li> {{result.topic}} </li>
+            </h3>
+                <h4>
+                    <li>
+                        <a href="{{result.letter_link}}" target="_blank">{{ result.title }}</a>
+                    </li>
+                </h4>
+                <li>{{result.preview}}</li>
+                <li>{{result.writer}}</li>
+                <li>{{result.published_date}}</li>
+                <hr>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

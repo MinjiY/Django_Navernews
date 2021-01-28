@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from news.models import Letter 
 import requests
@@ -10,8 +10,22 @@ from django.utils import timezone
 
 from selenium import webdriver
 import time
+from news.forms import NameForm
+from django.db.models import Q
+from django.views.generic.edit import FormView
 
 # Create your views here.
+def news_list(request):
+    # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
+
+    return render(request, 'news/news_list.html')
+
+
+
+def extract_date(mystr):
+    mystr = mystr.replace('<span class="bar"></span>','')
+    return mystr
+
 
 def parsing(sid1, sid2):
     url = 'https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid1='+str(sid1)+'&sid2='+str(sid2)
@@ -53,8 +67,9 @@ def parsing(sid1, sid2):
     return content
 
 
-def selenium_parsing():
-    URL = 'https://sports.news.naver.com/'
+def selenium_parsing(sports):
+    URL = "https://sports.news.naver.com/"+sports+"/news/index.nhn?isphoto=N"
+    
     chrome_options=webdriver.ChromeOptions()
     chrome_options.add_argument('headless')
     chrome_options.add_argument('--disable-gpu')
@@ -62,11 +77,11 @@ def selenium_parsing():
     path = "C:\\cloud\\selenium\\webdriver\\chromedriver.exe"
     driver = webdriver.Chrome(path, chrome_options= chrome_options)
 
-    driver.get("https://sports.news.naver.com/kbaseball/news/index.nhn?isphoto=N")
+    driver.get(URL)
     time.sleep(3)
 
     title = driver.find_elements_by_css_selector('#_newsList > ul > li > div > a > span')
-    link = driver.find_elements_by_css_selector('#_newsList > ul > li:nth-child(1) > div > a')
+    link = driver.find_elements_by_css_selector('#_newsList > ul > li > div > a')
     date = driver.find_elements_by_css_selector('#_newsList > ul > li > div > div > span.time')
     preview = driver.find_elements_by_css_selector('#_newsList > ul > li > div > p')
     writer = driver.find_elements_by_css_selector('#_newsList > ul > li > div > div > span.press')
@@ -79,25 +94,13 @@ def selenium_parsing():
     previews = []
     writers = []
     for element in zip(title,link,date,preview,writer):
-        #print(element[0].get_attribute('innerHTML'))
         titles.append(element[0].get_attribute('innerHTML'))
-        #print(element[1].get_attribute('href'))
         links.append(element[1].get_attribute('href'))
-        #print(element[2].get_attribute('innerHTML'))
-        dates.append(element[2].get_attribute('innerHTML'))
-        #print(element[3].get_attribute('innerHTML'))
+        dates.append(extract_date(element[2].get_attribute('innerHTML')))
         previews.append(element[3].get_attribute('innerHTML'))
-        #print(element[4].get_attribute('innerHTML'))
         writers.append(element[4].get_attribute('innerHTML'))
     contents = zip(titles,links,dates,previews,writers)
     return contents
-
-
-
-def news_list(request):
-    # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
-
-    return render(request, 'news/news_list.html')
 
 #category topic title letter_link published_date preview writer
 # db에서 뉴스들 가져오기
@@ -112,7 +115,6 @@ def news_detail(request, sid1, sid2):
         for data in contents:
             print(data[2])
             form = Letter(
-                category=str(sid1) ,
                 topic=str(sid2),
                 title= data[0],
                 letter_link=data[1],
@@ -145,8 +147,63 @@ def news_detail(request, sid1, sid2):
 
 
 def news_sports(request, sports):
-    print(sports)
-    contents = selenium_parsing()
+    if request.method == 'POST':       
+        contents = selenium_parsing(sports)
+        for data in contents:
+            print(data[2])
+            form = Letter(
+                topic= sports,
+                title= data[0],
+                letter_link=data[1],
+                published_date=data[2],
+                preview= data[3],
+                writer=data[4]
+                )
+            form.save()
+            
+    else:
+        print('GET')
+    News = Letter.objects.filter(topic= sports ,created_date__lte = timezone.now()).order_by('created_date')
+    paginator = Paginator(News,3)
+    page_no = request.GET.get('page')
+    try:
+        News_p = paginator.page(page_no)
+    except PageNotAnInteger:
+        News_p = paginator.page(1)
+    except EmptyPage:
+        News_p = paginator.page(paginator.num_pages)
+    return render(request, 'news/news_sports.html',{'message':News_p, 'key':sports})
 
 
-    return render(request, 'news/news_sports.html',{'message':contents})
+
+
+def index(request):
+    context ={}
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+       
+        # check whether it's valid:
+        if form.is_valid():
+            print(form.cleaned_data)
+            print(form.cleaned_data['news_title'])
+
+            news_list = Letter.objects.filter(title__icontains=form.cleaned_data['news_title'])
+            context['form'] = form
+            context['search_keyword'] = form.cleaned_data['news_title']
+            context['result_list']= news_list
+            print(context)
+            print(news_list)
+           
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            #return HttpResponseRedirect('/news/search/')
+            return render(request, 'news/news_search.html', {'search_list': context})
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = NameForm()
+
+    return render(request, 'news/news_search.html', {'search_list': context})

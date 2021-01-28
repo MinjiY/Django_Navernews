@@ -1,7 +1,8 @@
 {% extends "home.html"%}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/news.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% block content %}
+    <p>news detail</p>
     <!-- title : data[0] link: data[1] date: data[2] descs: data[3] writer:
     data[4]-->
     <div class = "save">
@@ -15,45 +16,44 @@
     <div>
         {% if key.0 == 101 %}
             {% if key.1 == 259 %}
-                <h1>
+                <h2>
                     금융
-                </h1>
+                </h2>
             {% elif key.1 == 258 %}
-                <h1>
+                <h2>
                     증권
-                </h1>
+                </h2>
             {% elif key.1 == 261 %}
-                <h1>
+                <h2>
                     산업/재계
-                </h1>
+                </h2>
             {% endif %}
         {% elif key.0 == 105 %}
             {% if key.1 == 731 %}
-                <h1>
+                <h2>
                     모바일
-                </h1>
+                </h2>
             {% elif key.1 == 226 %}
-                <h1>
+                <h2>
                     인터넷/SNS
-                </h1>
+                </h2>
             {% elif key.1 == 227 %}
-                <h1>
-                    통신/뉴미디어</h1>
+                <h2>
+                    통신/뉴미디어
+                </h2>
             {% endif %}
         {% endif %}
         <br>
-        <!-- 스크래피 장고 아이템 연동-->
-
-        <!-- category topic title letter_link published_date preview writer -->
         {% for data in message%}
             <h4>
                 <li>
                     <a href="{{data.letter_link}}" target="_blank">{{ data.title }}</a>
                 </li>
             </h4>
-            <li>{{data.published_date}}</li>
             <li>{{data.preview}}</li>
             <li>{{data.writer}}</li>
+            <li>{{data.published_date}}</li>
+
             <hr>
         {% endfor %}
     </div>
