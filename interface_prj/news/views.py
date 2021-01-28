@@ -15,11 +15,26 @@ from django.db.models import Q
 from django.views.generic.edit import FormView
 
 # Create your views here.
-def news_list(request):
-    # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
 
-    return render(request, 'news/news_list.html')
-
+def transform(keyword):
+    if keyword == '259':
+        return '야구'
+    elif keyword == '258':
+        return '증권'
+    elif keyword == '261':
+        return '산업/재계'
+    elif keyword == '731':
+        return '모바일'
+    elif keyword == '226':
+        return '인터넷/SNS'
+    elif keyword =='227':
+        return '통신/뉴미디어'
+    elif keyword == 'kbaseball':
+        return '야구'
+    elif keyword == 'kfootball':
+        return '축구'
+    elif keyword == 'wfootball':
+        return '해외축구'
 
 
 def extract_date(mystr):
@@ -102,6 +117,11 @@ def selenium_parsing(sports):
     contents = zip(titles,links,dates,previews,writers)
     return contents
 
+
+def news_list(request):
+    # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
+
+    return render(request, 'news/news_list.html')
 #category topic title letter_link published_date preview writer
 # db에서 뉴스들 가져오기
 def news_detail(request, sid1, sid2):
@@ -177,32 +197,28 @@ def news_sports(request, sports):
 
 
 
-def index(request):
+def news_search(request):
     context ={}
-    # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
         form = NameForm(request.POST)
-       
-        # check whether it's valid:
         if form.is_valid():
-            print(form.cleaned_data)
+            topic = form.cleaned_data['news_topic']
+            _title = form.cleaned_data['news_title']
+            print(form.cleaned_data['news_topic'])
             print(form.cleaned_data['news_title'])
 
-            news_list = Letter.objects.filter(title__icontains=form.cleaned_data['news_title'])
-            context['form'] = form
-            context['search_keyword'] = form.cleaned_data['news_title']
-            context['result_list']= news_list
-            print(context)
-            print(news_list)
+            news_list=[]
+            if topic== 'default':
+                news_list = Letter.objects.filter(title__icontains=_title)
+            else:
+                news_func = lambda __x__: Letter.objects.filter(Q(topic__icontains=__x__) & Q(title__icontains=_title)).distinct()
+                news_list = news_func(topic)
            
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            #return HttpResponseRedirect('/news/search/')
+            context['form'] = form
+            context['search_keyword'] = _title 
+            context['result_list']= news_list
             return render(request, 'news/news_search.html', {'search_list': context})
 
-    # if a GET (or any other method) we'll create a blank form
     else:
         form = NameForm()
 

@@ -6,7 +6,7 @@ from news import views
 app_name='news'
 urlpatterns = [
     path('',views.news_list, name='news_list'),
-    path('search/', views.index, name='index'),
+    path('search/', views.news_search, name='news_search'),
     path('<int:sid1>/<int:sid2>/', views.news_detail, name='news_detail'),
     path('<str:sports>/', views.news_sports, name='news_sports'),
 ]
