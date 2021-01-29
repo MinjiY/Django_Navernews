@@ -12,44 +12,34 @@
                 <span class="glyphicon glyphicon-check"></span>
             </button>
             <button type="submit" name="UD" value="delete"  class="save btn btn-danger">삭제하기
-                <span class="glyphicon glyphicon-check"></span>
+                <span class="glyphicon glyphicon-remove"></span>
             </button>
         </form>
     </div>
     <div>
+        <h2 id="font-bold">
         {% if key.0 == 101 %}
             {% if key.1 == 259 %}
-                <h2>
-                    금융
-                </h2>
+                금융
             {% elif key.1 == 258 %}
-                <h2>
-                    증권
-                </h2>
+                증권
             {% elif key.1 == 261 %}
-                <h2>
-                    산업/재계
-                </h2>
+                산업/재계
             {% endif %}
         {% elif key.0 == 105 %}
             {% if key.1 == 731 %}
-                <h2>
-                    모바일
-                </h2>
+                모바일
             {% elif key.1 == 226 %}
-                <h2>
-                    인터넷/SNS
-                </h2>
+                인터넷/SNS
             {% elif key.1 == 227 %}
-                <h2>
-                    통신/뉴미디어
-                </h2>
+                통신/뉴미디어
             {% endif %}
         {% endif %}
+        </h2>
         <br>
         {% for data in message%}
             <h4>
-                <li>
+                <li id="font-bold">
                     <a href="{{data.letter_link}}" target="_blank">{{ data.title }}</a>
                 </li>
             </h4>

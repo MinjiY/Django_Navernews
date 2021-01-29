@@ -13,28 +13,24 @@
                 <span class="glyphicon glyphicon-check"></span>
             </button>
             <button type="submit" name="UD" value="delete"  class="save btn btn-danger">삭제하기
-                <span class="glyphicon glyphicon-check"></span>
+                <span class="glyphicon glyphicon-remove"></span>
             </button>
         </form>
     </div>
     <div>
+        <h2 id = "font-bold">
         {% if key == 'kbaseball' %}
-            <h2>
-                야구
-            </h2>
+            야구
         {% elif key == 'kfootball' %}
-            <h2>
-                축구
-            </h2>
+            축구
         {% elif key == 'wfootball' %}
-            <h2>
-                해외축구
-            </h2>
+            해외축구
         {% endif %}
+        </h2>
         <br>
         {% for data in message%}
             <h4>
-                <li>
+                <li id ="font-bold">
                     <a href="{{data.letter_link}}" target="_blank">{{ data.title }}</a>
                 </li>
             </h4>

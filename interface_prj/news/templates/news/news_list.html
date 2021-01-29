@@ -7,7 +7,7 @@
         {% if key == 0 %}
         <h2>◀ 더보기 </h2>
         <div id="left">
-            <h4 style="font-weight: bold"> 경제 </h4>
+            <h4 id="font-bold"> 경제 </h4>
             {% for data in message.economy|__zip:"3" %}
                 <a href="{{ data.0.letter_link}}">
                     <p>{{ data.0.title}}</p>
@@ -17,7 +17,7 @@
             {% endfor %}
         </div>
         <div id="middle">
-            <h4 style="font-weight: bold"> IT/과학 </h4>
+            <h4 id="font-bold"> IT/과학 </h4>
             {% for data in message.it_sc|__zip:"3" %}
                 <a href="{{ data.0.letter_link}}">
                     <p>{{ data.0.title}}</p>
@@ -27,7 +27,7 @@
             {% endfor %}
         </div>
         <div id="right">
-            <h4 style="font-weight: bold"> 스포츠 </h4>
+            <h4 id="font-bold"> 스포츠 </h4>
             {% for data in message.sports|__zip:"3" %}
                  <a href="{{ data.0.letter_link}}">
                     <p>{{ data.0.title}}</p>
