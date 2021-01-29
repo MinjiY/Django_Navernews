@@ -1,6 +1,7 @@
 /* css selector */
 .page-header {
-    background-color: #9999ff;
+    /* background-color: #9999ff; */
+    background-image: url('img/galaxy.jpg');
     margin-top: 0;
     padding: 20px 20px 20px 40px;
 }
@@ -50,25 +51,43 @@ h1{
 .comment {
     margin: 20px 0px 20px 20px;
 }
-
-.first {
-    border: 1px solid red;
-    height:30%;
-    box-sizing: border-box;
+#wrap{
+    width:300px;
+    height:300px;
+    margin:0 auto;
 }
-
-.second{
-    border: 1px solid green;
-    height:30%;
-    box-sizing: border-box;
+#left {
+    width:30%; 
+    height:100px;
+    /* background-color:red; */ 
+    float:left;
+    margin-right:30px;
 }
+ 
+#middle {
+    width:30%;
+    height:100px;
+   /*  background-color:blue; */ 
+    float:left;
+    margin-right:30px;
 
-.third{
-    border: 1px solid blue;
-
-    height:30%;
-    box-sizing: border-box;
 }
+ 
+#right {
+    width:30%; 
+    height:100px;
+   /* background-color:green;*/ 
+    float:left;
+    margin-right:30px;
+
+}
+#footer{
+    width:20% ;
+    height:100px;
+   background-color:pink; 
+    clear:both;
+    float: bottom;
+ }
 
 
 /* 사이드 바*/

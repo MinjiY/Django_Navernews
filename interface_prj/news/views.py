@@ -10,31 +10,11 @@ from django.utils import timezone
 
 from selenium import webdriver
 import time
-from news.forms import NameForm
+from news.forms import NameForm, UDForm
 from django.db.models import Q
 from django.views.generic.edit import FormView
 
 # Create your views here.
-
-def transform(keyword):
-    if keyword == '259':
-        return '야구'
-    elif keyword == '258':
-        return '증권'
-    elif keyword == '261':
-        return '산업/재계'
-    elif keyword == '731':
-        return '모바일'
-    elif keyword == '226':
-        return '인터넷/SNS'
-    elif keyword =='227':
-        return '통신/뉴미디어'
-    elif keyword == 'kbaseball':
-        return '야구'
-    elif keyword == 'kfootball':
-        return '축구'
-    elif keyword == 'wfootball':
-        return '해외축구'
 
 
 def extract_date(mystr):
@@ -120,37 +100,45 @@ def selenium_parsing(sports):
 
 def news_list(request):
     # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
+    contents = {}
+    key = 0
+    try:
+        economy=  Letter.objects.filter(category__icontains='101' ).order_by('-created_date')
+        it_sc = Letter.objects.filter(category__icontains='105' ).order_by('-created_date')
+        sports= Letter.objects.filter(category__icontains='sports' ).order_by('-created_date')
+        contents = {'economy': economy , 'it_sc': it_sc, 'sports':sports}
+    except:
+        key=1
 
-    return render(request, 'news/news_list.html')
-#category topic title letter_link published_date preview writer
-# db에서 뉴스들 가져오기
+    return render(request, 'news/news_list.html',{'message':contents, 'key':key})
+
+
 def news_detail(request, sid1, sid2):
     mylist=[sid1,sid2]
     
     if request.method == 'POST':
         contents = parsing(sid1, sid2)
         mylist = [sid1, sid2]
-        #form = LetterForm()
-       
-        for data in contents:
-            print(data[2])
-            form = Letter(
-                topic=str(sid2),
-                title= data[0],
-                letter_link=data[1],
-                published_date=data[2],
-                preview= data[3],
-                writer=data[4]
-                )
-            form.save()
+        UDform = UDForm(request.POST)
+        if UDform.is_valid():
+            if UDform.cleaned_data['UD'] == 'update':
+                for data in contents:
+                    form = Letter(
+                        category=str(sid1),
+                        topic=str(sid2),
+                        title= data[0],
+                        letter_link=data[1],
+                        published_date=data[2],
+                        preview= data[3],
+                        writer=data[4]
+                        )
+                    form.save()
+            elif UDform.cleaned_data['UD'] =='delete':
+                Letter.objects.filter(topic=sid2).delete()
+
     else:
         print('GET')
-        
-    # 버튼 누르면 현재뉴스목록 DB에 저장
-    # => topic이 fk,
-    # => title로 중복체크
-    # print(request.POST['sid1'])
-    News = Letter.objects.filter(topic= str(sid2),created_date__lte = timezone.now()).order_by('created_date')
+    News = Letter.objects.filter(topic= str(sid2),created_date__lte = timezone.now()).order_by('-created_date')
     
     # pagination
     paginator = Paginator(News,3)
@@ -164,23 +152,26 @@ def news_detail(request, sid1, sid2):
 
     return render(request, 'news/news_detail.html' ,{'message': News_p, 'key':mylist})
 
-
-
 def news_sports(request, sports):
     if request.method == 'POST':       
         contents = selenium_parsing(sports)
-        for data in contents:
-            print(data[2])
-            form = Letter(
-                topic= sports,
-                title= data[0],
-                letter_link=data[1],
-                published_date=data[2],
-                preview= data[3],
-                writer=data[4]
-                )
-            form.save()
-            
+        UDform = UDForm(request.POST)
+        if UDform.is_valid():
+            if UDform.cleaned_data['UD'] == 'update':
+                for data in contents:
+                    print(data[2])
+                    form = Letter(
+                        category = 'sports',
+                        topic= sports,
+                        title= data[0],
+                        letter_link=data[1],
+                        published_date=data[2],
+                        preview= data[3],
+                        writer=data[4]
+                        )
+                    form.save()
+            elif UDform.cleaned_data['UD'] =='delete':
+                Letter.objects.filter(topic=sports).delete()
     else:
         print('GET')
     News = Letter.objects.filter(topic= sports ,created_date__lte = timezone.now()).order_by('created_date')
@@ -204,9 +195,6 @@ def news_search(request):
         if form.is_valid():
             topic = form.cleaned_data['news_topic']
             _title = form.cleaned_data['news_title']
-            print(form.cleaned_data['news_topic'])
-            print(form.cleaned_data['news_title'])
-
             news_list=[]
             if topic== 'default':
                 news_list = Letter.objects.filter(title__icontains=_title)

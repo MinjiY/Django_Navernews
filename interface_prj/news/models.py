@@ -7,6 +7,8 @@ from django.utils import timezone
 #class Category(models.Model):
 
 class Letter(models.Model):
+    # 큰 주제
+    category = models.CharField(max_length=10, default="", null=True)
     # 작은 주제
     topic = models.CharField(max_length=10, default="", null=True)
     # 기사제목

@@ -1,11 +1,10 @@
 <!-- base.html 페이지 상속-->
 
-{% extends "home.html"%}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% block content %}
-    <p>news_search</p>
+{% extends "news/home.html" %}
 
+{% block content %}
+    {% load static %} 
+    <link rel = "stylesheet" type = "text/css" href = "{% block stylesheet %}{% static 'news/css/news.css' %}{% endblock %}" /> 
     <div id="content">
         <h2>
             News Search Engine
@@ -25,26 +24,39 @@
                 <option value="227"> 통신/뉴미디어 </option>
                 <option value="kbaseball"> 야구 </option>
                 <option value="kfootball"> 축구 </option>
-                <option value="wfootball"> 해외 </option>
+                <option value="wfootball"> 해외축구 </option>
             </select>
-
-            <label for="news_title">Search title:
-            </label>
+            <label for="news_title">Search title: </label>
             <input
                 id="news_title"
                 type="text"
                 name="news_title"
                 value="{{ search_keyword}}">
-            <input type="submit" value="OK">
-
-        </form>
-        <br/><br/>
+                <input type="submit" value="OK"></form>
+                <br/><br/> 
         {% if search_list %}
-            <!-- {{search_list.result_list.0.title}} -->
-            {% for result in search_list.result_list %}
+                {% for result in search_list.result_list %}
                 <h3>
                     <li>
-                        {{result.topic}}
+                    {% if result.topic == '259' %}
+                        금융    
+                    {% elif result.topic == '258'%}
+                        증권
+                    {% elif result.topic == '261'%}
+                        산업/재계
+                    {% elif result.topic == '731'%}
+                        모바일
+                    {% elif result.topic == '226'%}
+                        인터넷/SNS
+                    {% elif result.topic == '227'%}
+                        통신/뉴미디어
+                    {% elif result.topic == 'kbaseball'%}
+                        야구
+                    {% elif result.topic == 'kfootball'%}
+                        축구
+                    {% elif result.topic == 'kfootball'%}
+                        해외축구
+                    {% endif %}
                     </li>
                 </h3>
                 <h4>
@@ -58,5 +70,5 @@
                 <hr>
             {% endfor %}
         {% endif %}
-    </div>
-{% endblock %}
+                </div>
+                {% endblock %}

@@ -1,24 +1,47 @@
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% extends "news/home.html"%}
 
-{% extends "home.html"%}
-    {% block content %}
-        <!-- <div class="first"> <p>first</p> <p>first</p> <p>first</p> <p>first</p>
-        </div> <div class="second"> <p>second</p></div> <div class="third">
-        <p>third</p></div> -->
-        <section>
-            <div class="first">
-                <p> news list</p>
+{% block content %}
+    {% load static %}
+    {% load filters %}
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static 'news/css/news.css' %}{% endblock %}" />
+        {% if key == 0 %}
+        <h2>◀ 더보기 </h2>
+        <div id="left">
+            <h4 style="font-weight: bold"> 경제 </h4>
+            {% for data in message.economy|__zip:"3" %}
+                <a href="{{ data.0.letter_link}}">
+                    <p>{{ data.0.title}}</p>
+                </a>
+                {{data.0.preview}}
                 <hr>
-            </div>
-            <div class="second">
-                
+            {% endfor %}
+        </div>
+        <div id="middle">
+            <h4 style="font-weight: bold"> IT/과학 </h4>
+            {% for data in message.it_sc|__zip:"3" %}
+                <a href="{{ data.0.letter_link}}">
+                    <p>{{ data.0.title}}</p>
+                </a>
+                {{data.0.preview}}
                 <hr>
-            </div>
-            <div class="third">
-               
-            </div>
-
-        </section>
-
+            {% endfor %}
+        </div>
+        <div id="right">
+            <h4 style="font-weight: bold"> 스포츠 </h4>
+            {% for data in message.sports|__zip:"3" %}
+                 <a href="{{ data.0.letter_link}}">
+                    <p>{{ data.0.title}}</p>
+                 </a>
+                {{data.0.preview}}
+                <hr>
+            {% endfor %}
+        </div>
+        {% elif key == 1%}
+        <h2> ◀ 데이터가 없습니다. 
+            <button class="btn btn-warning">새로 가져오기
+                <span class="glyphicon glyphicon-check"></span>
+            </button>
+            버튼을 눌러서 데이터를 가져오세요.
+        </h2>
+        {% endif %}
     {% endblock %}
