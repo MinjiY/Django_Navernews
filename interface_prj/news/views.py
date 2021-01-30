@@ -8,12 +8,11 @@ from django.utils import timezone
 
 from news._crawling import parsing, selenium_parsing
 
-from news.forms import NameForm, UDForm
+from news.forms import SearchForm, UDForm
 from django.db.models import Q
 from django.views.generic.edit import FormView
 
 # Create your views here.
-
 
 def news_list(request):
     # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
@@ -31,11 +30,9 @@ def news_list(request):
 
 
 def news_detail(request, sid1, sid2):
-    mylist=[sid1,sid2]
-    
+    mylist = [str(sid1), str(sid2)]
     if request.method == 'POST':
         contents = parsing(sid1, sid2)
-        mylist = [sid1, sid2]
         UDform = UDForm(request.POST)
         if UDform.is_valid():
             if UDform.cleaned_data['UD'] == 'update':
@@ -103,12 +100,10 @@ def news_sports(request, sports):
     return render(request, 'news/news_sports.html',{'message':News_p, 'key':sports})
 
 
-
-
 def news_search(request):
     context ={}
     if request.method == 'POST':
-        form = NameForm(request.POST)
+        form = SearchForm(request.POST)
         if form.is_valid():
             topic = form.cleaned_data['news_topic']
             _title = form.cleaned_data['news_title']
@@ -125,6 +120,6 @@ def news_search(request):
             return render(request, 'news/news_search.html', {'search_list': context})
 
     else:
-        form = NameForm()
+        form = SearchForm()
 
     return render(request, 'news/news_search.html', {'search_list': context})

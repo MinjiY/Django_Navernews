@@ -2,6 +2,8 @@
 
 {% block content %}
 {% load static %}
+    {% load filters %}
+
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static 'news/css/news.css' %}{% endblock %}" />
 
     <!-- title : data[0] link: data[1] date: data[2] descs: data[3] writer:
@@ -19,13 +21,7 @@
     </div>
     <div>
         <h2 id = "font-bold">
-        {% if key == 'kbaseball' %}
-            야구
-        {% elif key == 'kfootball' %}
-            축구
-        {% elif key == 'wfootball' %}
-            해외축구
-        {% endif %}
+         {{ key|__topic }}
         </h2>
         <br>
         {% for data in message%}

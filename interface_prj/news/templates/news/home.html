@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-{% load static %}
-<link rel="stylesheet" href="{% static 'news/css/news.css' %}">
 <html lang="ko">
 <meta charset="UTF-8">
     <head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'news/css/news.css' %}">
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
         
@@ -23,7 +24,7 @@
 
         <ul>
             <li>
-                <a href=""> 경제 뉴스 </a>
+                <a href=""> 경제 </a>
                 <ul>
                     <li><a href="{% url 'news:news_detail' sid1=101 sid2=259 %}"> 금융 </a></li>
                     <li><a href="{% url 'news:news_detail' sid1=101 sid2=258 %}"> 증권 </a></li>

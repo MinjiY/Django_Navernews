@@ -32,6 +32,10 @@ h1{
 .post-form textarea, .post-form input {
     width: 100%;
 }
+.text-form{
+    margin-right: 50px;
+    width: 60%;
+}
 
 .top-menu, .top-menu:hover, .top-menu:visited {
     color: #ffffff;

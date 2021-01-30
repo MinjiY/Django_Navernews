@@ -4,6 +4,8 @@
 
 {% block content %}
     {% load static %} 
+    {% load filters %}
+
     <link rel = "stylesheet" type = "text/css" href = "{% block stylesheet %}{% static 'news/css/news.css' %}{% endblock %}" /> 
     <div id="content">
         <h2>
@@ -38,25 +40,8 @@
                 {% for result in search_list.result_list %}
                 <h3>
                     <li id= "font-bold">
-                    {% if result.topic == '259' %}
-                        금융    
-                    {% elif result.topic == '258'%}
-                        증권
-                    {% elif result.topic == '261'%}
-                        산업/재계
-                    {% elif result.topic == '731'%}
-                        모바일
-                    {% elif result.topic == '226'%}
-                        인터넷/SNS
-                    {% elif result.topic == '227'%}
-                        통신/뉴미디어
-                    {% elif result.topic == 'kbaseball'%}
-                        야구
-                    {% elif result.topic == 'kfootball'%}
-                        축구
-                    {% elif result.topic == 'kfootball'%}
-                        해외축구
-                    {% endif %}
+                    {{ result.topic|__topic }} 
+                   
                     </li>
                 </h3>
                 <h4>

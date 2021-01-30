@@ -1,7 +1,8 @@
 {% extends "news/home.html"%}
 
 {% block content %}
-{% load static %}
+    {% load static %}
+    {% load filters %}
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static 'news/css/news.css' %}{% endblock %}" />
     <!-- title : data[0] link: data[1] date: data[2] descs: data[3] writer:
     data[4]-->
@@ -18,23 +19,12 @@
     </div>
     <div>
         <h2 id="font-bold">
-        {% if key.0 == 101 %}
-            {% if key.1 == 259 %}
-                금융
-            {% elif key.1 == 258 %}
-                증권
-            {% elif key.1 == 261 %}
-                산업/재계
-            {% endif %}
-        {% elif key.0 == 105 %}
-            {% if key.1 == 731 %}
-                모바일
-            {% elif key.1 == 226 %}
-                인터넷/SNS
-            {% elif key.1 == 227 %}
-                통신/뉴미디어
-            {% endif %}
+        {% if key.0 == '101' %}
+            {{ key.1|__topic }}
+        {% elif key.0 == '105' %}
+            {{ key.1|__topic }}
         {% endif %}
+        
         </h2>
         <br>
         {% for data in message%}
