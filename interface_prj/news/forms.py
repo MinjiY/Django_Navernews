@@ -6,4 +6,4 @@ class SearchForm(forms.Form):
 
 #update, delete form
 class UDForm(forms.Form):
-    UD = forms.CharField(label='delete',max_length=10)
+    UD = forms.CharField(label='UD',max_length=10)

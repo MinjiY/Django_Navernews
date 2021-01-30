@@ -9,7 +9,10 @@
     <div class = "save">
         <form action="" method="post">
             {% csrf_token %}
-            <button type="submit" name="UD" value="update" class="save btn btn-warning">새로 가져오기
+            <button type="submit" name="UD" value="new100" class="save btn btn-default">최신 데이터 100개 새로 가져오기
+                <span class="glyphicon glyphicon-check"></span>
+            </button>
+            <button type="submit" name="UD" value="update" class="save btn btn-warning">최신 데이터 10개 새로 가져오기
                 <span class="glyphicon glyphicon-check"></span>
             </button>
             <button type="submit" name="UD" value="delete"  class="save btn btn-danger">삭제하기

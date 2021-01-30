@@ -6,7 +6,7 @@ from news.models import Letter
 
 from django.utils import timezone
 
-from news._crawling import parsing, selenium_parsing
+from news._crawling import parsing, selenium_parsing, new100_parsing, selenium_parsing_new100
 
 from news.forms import SearchForm, UDForm
 from django.db.models import Q
@@ -32,10 +32,11 @@ def news_list(request):
 def news_detail(request, sid1, sid2):
     mylist = [str(sid1), str(sid2)]
     if request.method == 'POST':
-        contents = parsing(sid1, sid2)
         UDform = UDForm(request.POST)
         if UDform.is_valid():
+            # 최신 데이터 10개 가져오기
             if UDform.cleaned_data['UD'] == 'update':
+                contents = parsing(sid1, sid2)
                 for data in contents:
                     form = Letter(
                         category=str(sid1),
@@ -47,6 +48,21 @@ def news_detail(request, sid1, sid2):
                         writer=data[4]
                         )
                     form.save()
+            # 최신 데이터 100개 가져오기
+            elif UDform.cleaned_data['UD'] == 'new100':
+                contents = new100_parsing(sid1,sid2)
+                for data in contents:
+                    form = Letter(
+                        category=str(sid1),
+                        topic=str(sid2),
+                        title= data[0],
+                        letter_link=data[1],
+                        published_date=data[2],
+                        preview= data[3],
+                        writer=data[4]
+                        )
+                    form.save()
+            # 데이터 전부 삭제
             elif UDform.cleaned_data['UD'] =='delete':
                 Letter.objects.filter(topic=sid2).delete()
 
@@ -68,12 +84,12 @@ def news_detail(request, sid1, sid2):
 
 def news_sports(request, sports):
     if request.method == 'POST':       
-        contents = selenium_parsing(sports)
+        
         UDform = UDForm(request.POST)
         if UDform.is_valid():
             if UDform.cleaned_data['UD'] == 'update':
+                contents = selenium_parsing(sports)
                 for data in contents:
-                    print(data[2])
                     form = Letter(
                         category = 'sports',
                         topic= sports,
@@ -84,11 +100,25 @@ def news_sports(request, sports):
                         writer=data[4]
                         )
                     form.save()
+            elif UDform.cleaned_data['UD'] == 'new100':
+                contents = selenium_parsing_new100(sports)
+                for data in contents:
+                    form = Letter(
+                        category = 'sports',
+                        topic= sports,
+                        title= data[0],
+                        letter_link=data[1],
+                        published_date=data[2],
+                        preview= data[3],
+                        writer=data[4]
+                        )
+                    form.save()
+
             elif UDform.cleaned_data['UD'] =='delete':
                 Letter.objects.filter(topic=sports).delete()
     else:
         print('GET')
-    News = Letter.objects.filter(topic= sports ,created_date__lte = timezone.now()).order_by('created_date')
+    News = Letter.objects.filter(topic= sports ,created_date__lte = timezone.now()).order_by('-created_date')
     paginator = Paginator(News,3)
     page_no = request.GET.get('page')
     try:
