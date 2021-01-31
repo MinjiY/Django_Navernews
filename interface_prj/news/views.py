@@ -15,7 +15,6 @@ from django.views.generic.edit import FormView
 # Create your views here.
 
 def news_list(request):
-    # DB에서 한 토픽당 글 레터 두개씩 가져와서 뿌림
     contents = {}
     key = 0
     try:
@@ -25,8 +24,50 @@ def news_list(request):
         contents = {'economy': economy , 'it_sc': it_sc, 'sports':sports}
     except:
         key=1
-
+        
     return render(request, 'news/news_list.html',{'message':contents, 'key':key})
+
+
+def news_category_sports(request):
+    key = ['sports',]
+    sports=['kbaseball','kfootball','wfootball']
+    sportss=[]
+    contents={}
+    func = lambda __sid1__, __sid2__: Letter.objects.filter(category__icontains=__sid1__, topic__icontains=__sid2__).order_by('-created_date')
+    for sid2 in sports:
+        sportss.append(func('sports',sid2))
+        contents = {'m': sportss}
+    key.append(sports)
+
+    return render(request, 'news/news_category.html', {'message': contents , 'key': key})
+
+
+def news_category_list(request, sid1):
+    key = [str(sid1),]
+    economy = ['259','258','261']
+    it_sc=['731','226','227']
+    economys=[]
+    it_scs=[]
+    contents={}
+    func = lambda __sid1__,__sid2__: Letter.objects.filter(category__icontains=__sid1__, topic__icontains=__sid2__).order_by('-created_date')
+    if key[0] =='101':
+        print('101')
+        for sid2 in economy:
+            economy_topic= func(sid1,sid2)
+            economys.append(economy_topic)
+        contents={'m': economys}
+        key.append(economy)
+
+    elif key[0] == '105':
+        print('105')
+        for sid2 in it_sc:
+            it_topic = func(sid1,sid2)
+            it_scs.append(it_topic)
+        contents={'m': it_scs}
+        key.append(it_sc)
+
+
+    return render(request, 'news/news_category.html', {'message': contents , 'key': key})
 
 
 def news_detail(request, sid1, sid2):
@@ -81,6 +122,7 @@ def news_detail(request, sid1, sid2):
         News_p = paginator.page(paginator.num_pages)
 
     return render(request, 'news/news_detail.html' ,{'message': News_p, 'key':mylist})
+
 
 def news_sports(request, sports):
     if request.method == 'POST':       

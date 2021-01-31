@@ -28,4 +28,12 @@ def __topic(value):
         return '축구'
     elif value == 'wfootball':
         return '해외축구'
-    
+
+@register.filter()
+def __category(value):
+    if value == '101':
+       return '경제'
+    elif value == '105':
+        return 'IT/과학'
+    elif value == 'sports':
+        return '스포츠' 

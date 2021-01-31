@@ -4,12 +4,11 @@
     {% load static %}
     {% load filters %}
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static 'news/css/news.css' %}{% endblock %}" />
-        {% if key == 0 %}
         <h2>◀ 더보기 </h2>
         <div id="left">
-            <h4 id="font-bold"> 경제 </h4>
-            {% for data in message.economy|__zip:"3" %}
-                <a href="{{ data.0.letter_link}}">
+            <h4 id="font-bold"> {{key.1.0|__topic}} </h4>
+            {% for data in message.m.0|__zip:"3" %}
+                 <a href="{{ data.0.letter_link}}">
                     <p id="font-bold">{{ data.0.title}}</p>
                 </a>
                 {{data.0.preview}}
@@ -17,9 +16,9 @@
             {% endfor %}
         </div>
         <div id="middle">
-            <h4 id="font-bold"> IT/과학 </h4>
-            {% for data in message.it_sc|__zip:"3" %}
-                <a href="{{ data.0.letter_link}}">
+           <h4 id="font-bold"> {{key.1.1|__topic}} </h4>
+            {% for data in message.m.1|__zip:"3" %}
+                 <a href="{{ data.0.letter_link}}">
                     <p id="font-bold">{{ data.0.title}}</p>
                 </a>
                 {{data.0.preview}}
@@ -27,21 +26,14 @@
             {% endfor %}
         </div>
         <div id="right">
-            <h4 id="font-bold"> 스포츠 </h4>
-            {% for data in message.sports|__zip:"3" %}
+           <h4 id="font-bold"> {{key.1.2|__topic}} </h4>
+            {% for data in message.m.2|__zip:"3" %}
                  <a href="{{ data.0.letter_link}}">
                     <p id="font-bold">{{ data.0.title}}</p>
-                 </a>
+                </a>
                 {{data.0.preview}}
                 <hr>
             {% endfor %}
+
         </div>
-        {% elif key == 1 %}
-        <h2> ◀ 데이터가 없습니다. 
-            <button class="btn btn-warning">새로 가져오기
-                <span class="glyphicon glyphicon-check"></span>
-            </button>
-            버튼을 눌러서 데이터를 가져오세요.
-        </h2>
-        {% endif %}
     {% endblock %}
