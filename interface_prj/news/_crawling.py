@@ -17,7 +17,6 @@ def new100_parsing(sid1,sid2):
     # 네이버 뉴스는 뉴스목록을 tb class= content로 하고 ul로 type06_headline , type06 상위10개 하위10개로 나눠놨음
     # 실행중에 가져올 title 리스트
     title=[]
-    link =[]
     desc =[]
     writer =[]
     
@@ -35,7 +34,7 @@ def new100_parsing(sid1,sid2):
 
     while (len(title)) <100:    
         
-        url = 'https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2='+str(sid2)+'&sid1='+str(sid1)+'&date='+ check_today(indx) + '&page='+str(pindx)
+        url = 'https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2='+sid2+'&sid1='+sid1+'&date='+ check_today(indx) + '&page='+str(pindx)
         req_header={
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'
         }
@@ -65,20 +64,18 @@ def new100_parsing(sid1,sid2):
 
             title += soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li')
             title +=soup.select('div#main_content div.list_body.newsflash_body ul.type06 li')
-            link += soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li dt:nth-child(2) a[href]')
-            link += soup.select('div#main_content div.list_body.newsflash_body ul.type06 li dt:nth-child(2) a[href]')
             desc += soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li dl dd span.lede')
             desc += soup.select('div#main_content div.list_body.newsflash_body ul.type06 li dl dd span.lede')
             writer += soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li dl dd span.writing')
             writer += soup.select('div#main_content div.list_body.newsflash_body ul.type06 li dl dd span.writing')
 
 
-    for data in zip(title,link, desc, writer):
+    for data in zip(title, desc, writer):
         titles.append(data[0].find_all('dt', class_= not "photo")[0].text.strip())
-        links.append(data[1]['href'])
-        descs.append(data[2].text)
-        writers.append(data[3].text)
-        res2 = requests.get(data[1]['href'],headers=req_header )
+        links.append(data[0].find_all('dt', class_= not "photo")[0].find('a')['href'])
+        descs.append(data[1].text)
+        writers.append(data[2].text)
+        res2 = requests.get(data[0].find_all('dt', class_= not "photo")[0].find('a')['href'],headers=req_header )
         if res2.ok:
             published_date = BeautifulSoup(res2.text, 'html.parser').select('div#main_content div.article_header div.article_info div.sponsor span.t11')
             if len(published_date)>0:
@@ -88,7 +85,7 @@ def new100_parsing(sid1,sid2):
     
 
 def parsing(sid1, sid2):
-    url = 'https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid1='+str(sid1)+'&sid2='+str(sid2)
+    url = 'https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid1='+sid1+'&sid2='+sid2
     req_header={
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36'
     }
@@ -99,7 +96,6 @@ def parsing(sid1, sid2):
         soup = BeautifulSoup(html, 'html.parser')
 
         title = soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li')
-        link = soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li dt:nth-child(2) a[href]')
         desc = soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li dl dd span.lede')
         writer = soup.select('div#main_content div.list_body.newsflash_body ul.type06_headline li dl dd span.writing')
     
@@ -108,13 +104,13 @@ def parsing(sid1, sid2):
         dates = []
         descs=[]
         writers=[]
-        for data in zip(title,link, desc, writer):
+        for data in zip(title,desc, writer):
             titles.append(data[0].find_all('dt', class_= not "photo")[0].text.strip())
-            links.append(data[1]['href'])
-            descs.append(data[2].text)
-            writers.append(data[3].text)
+            links.append(data[0].find_all('dt', class_= not "photo")[0].find('a')['href'])
+            descs.append(data[1].text)
+            writers.append(data[2].text)
             
-            res2 = requests.get(data[1]['href'],headers=req_header )
+            res2 = requests.get(data[0].find_all('dt', class_= not "photo")[0].find('a')['href'],headers=req_header )
             if res2.ok:
                 published_date = BeautifulSoup(res2.text, 'html.parser').select('div#main_content div.article_header div.article_info div.sponsor span.t11')
                 if len(published_date)>0:
@@ -126,7 +122,7 @@ def selenium_parsing_new100(sports):
     chrome_options=webdriver.ChromeOptions()
     chrome_options.add_argument('headless')
     chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('lang=ko_KR')
+    chrome_options.add_argument('lang=ko_KR')   
     path = "C:\\cloud\\selenium\\webdriver\\chromedriver.exe"
     driver = webdriver.Chrome(path, chrome_options= chrome_options)
 
@@ -141,7 +137,7 @@ def selenium_parsing_new100(sports):
 
 
     while len(titles) < 100:
-        URL = 'https://sports.news.naver.com/'+sports+'/news/index.nhn?isphoto=N&date='+check_today(day)+'&page='+str(page)
+        URL = 'https://sports.news.naver.com/'+sports+'/news/index.nhn?isphoto=N&date='+check_today(day)+'&page='+page
         driver.get(URL)
         time.sleep(2)
 

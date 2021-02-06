@@ -18,9 +18,9 @@ def news_list(request):
     contents = {}
     key = 0
     try:
-        economy=  Letter.objects.filter(category__icontains='101' ).order_by('-created_date')
-        it_sc = Letter.objects.filter(category__icontains='105' ).order_by('-created_date')
-        sports= Letter.objects.filter(category__icontains='sports' ).order_by('-created_date')
+        economy=  Letter.objects.filter(category__icontains='101' )#.order_by('-created_date')
+        it_sc = Letter.objects.filter(category__icontains='105' )#.order_by('-created_date')
+        sports= Letter.objects.filter(category__icontains='sports' )#.order_by('-created_date')
         contents = {'economy': economy , 'it_sc': it_sc, 'sports':sports}
     except:
         key=1
@@ -33,7 +33,7 @@ def news_category_sports(request):
     sports=['kbaseball','kfootball','wfootball']
     sportss=[]
     contents={}
-    func = lambda __sid1__, __sid2__: Letter.objects.filter(category__icontains=__sid1__, topic__icontains=__sid2__).order_by('-created_date')
+    func = lambda __sid1__, __sid2__: Letter.objects.filter(category__icontains=__sid1__, topic__icontains=__sid2__)#.order_by('-created_date')
     for sid2 in sports:
         sportss.append(func('sports',sid2))
         contents = {'m': sportss}
@@ -43,13 +43,13 @@ def news_category_sports(request):
 
 
 def news_category_list(request, sid1):
-    key = [str(sid1),]
+    key = [sid1,]
     economy = ['259','258','261']
     it_sc=['731','226','227']
     economys=[]
     it_scs=[]
     contents={}
-    func = lambda __sid1__,__sid2__: Letter.objects.filter(category__icontains=__sid1__, topic__icontains=__sid2__).order_by('-created_date')
+    func = lambda __sid1__,__sid2__: Letter.objects.filter(category__icontains=__sid1__, topic__icontains=__sid2__)
     if key[0] =='101':
         print('101')
         for sid2 in economy:
@@ -71,7 +71,7 @@ def news_category_list(request, sid1):
 
 
 def news_detail(request, sid1, sid2):
-    mylist = [str(sid1), str(sid2)]
+    mylist = [sid1, sid2]
     if request.method == 'POST':
         UDform = UDForm(request.POST)
         if UDform.is_valid():
@@ -80,8 +80,8 @@ def news_detail(request, sid1, sid2):
                 contents = parsing(sid1, sid2)
                 for data in contents:
                     form = Letter(
-                        category=str(sid1),
-                        topic=str(sid2),
+                        category=sid1,
+                        topic=sid2,
                         title= data[0],
                         letter_link=data[1],
                         published_date=data[2],
@@ -94,8 +94,8 @@ def news_detail(request, sid1, sid2):
                 contents = new100_parsing(sid1,sid2)
                 for data in contents:
                     form = Letter(
-                        category=str(sid1),
-                        topic=str(sid2),
+                        category=sid1,
+                        topic=sid2,
                         title= data[0],
                         letter_link=data[1],
                         published_date=data[2],
@@ -109,7 +109,7 @@ def news_detail(request, sid1, sid2):
 
     else:
         print('GET')
-    News = Letter.objects.filter(topic= str(sid2),created_date__lte = timezone.now()).order_by('-created_date')
+    News = Letter.objects.filter(topic= sid2)
     
     # pagination
     paginator = Paginator(News,3)
@@ -160,7 +160,7 @@ def news_sports(request, sports):
                 Letter.objects.filter(topic=sports).delete()
     else:
         print('GET')
-    News = Letter.objects.filter(topic= sports ,created_date__lte = timezone.now()).order_by('-created_date')
+    News = Letter.objects.filter(topic= sports ,created_date__lte = timezone.now())
     paginator = Paginator(News,3)
     page_no = request.GET.get('page')
     try:
