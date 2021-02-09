@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from news.models import Letter 
 
 from django.utils import timezone
-
+import time
 from news._crawling import parsing, selenium_parsing, new100_parsing, selenium_parsing_new100
 
 from news.forms import SearchForm, UDForm
@@ -38,7 +38,6 @@ def news_category_sports(request):
         sportss.append(func('sports',sid2))
         contents = {'m': sportss}
     key.append(sports)
-
     return render(request, 'news/news_category.html', {'message': contents , 'key': key})
 
 

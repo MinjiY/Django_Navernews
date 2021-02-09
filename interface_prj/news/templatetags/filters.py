@@ -4,8 +4,8 @@ register = template.Library()
 
 @register.filter()
 def __zip(value,count):
-    count = [1,2,3]
-    return zip(value, count)
+    count2 = [1,2,3]
+    return zip(value, count2)
 
 
 @register.filter()
@@ -36,4 +36,4 @@ def __category(value):
     elif value == '105':
         return 'IT/과학'
     elif value == 'sports':
-        return '스포츠' 
+        return '스포츠'
